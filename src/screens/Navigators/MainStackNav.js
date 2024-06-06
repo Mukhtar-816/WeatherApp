@@ -11,7 +11,6 @@ const MainStackNav = () => {
         <NavigationContainer>
             <Stack.Navigator initialRouteName="Home" screenOptions={{ headerShown: false }}>
                 <Stack.Screen name="Home" component={HomeSrc} />
-                <Stack.Screen name="OnBoardingUi" component={OnBoardingUI} />
             </Stack.Navigator>
         </NavigationContainer>
     )

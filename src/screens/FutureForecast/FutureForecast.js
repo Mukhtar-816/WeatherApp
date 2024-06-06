@@ -5,7 +5,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { StyleSheet, Text, View, Pressable, FlatList } from 'react-native';
 import React, { useState, useEffect } from 'react';
-import { width } from '../../Theme/utils/Dimensions-Api';
+import { heightToDp, width, widthToDp } from '../../Theme/utils/Dimensions-Api';
 import { Colors } from '../../Theme/color';
 import WeatherCard from '../../Theme/components/WeatherCard.component';
 
@@ -37,7 +37,7 @@ const FutureForecast = ({ weatherData }) => {
     // Api Hourly Forecast call -----------------------------
 
     const { lat, lon } = weatherData.coord;
-    const API_KEY = 'c4ec65ce797ac2b12b7bb44a7eb7de83';
+    const API_KEY = 'e49fb4702a36252f6cb80c496c474b4c';
 
     const HourlyForecast = async () => {
         setLoaded(false);
@@ -46,7 +46,7 @@ const FutureForecast = ({ weatherData }) => {
             const response = await fetch(API);
             if (response.ok) {
                 const data = await response.json();
-                setHourlyWeatherData(data.list.splice(0, 24));
+                setHourlyWeatherData(data?.list?.splice(0, 24));
             }
             else {
                 setHourlyWeatherData(null);
@@ -59,14 +59,16 @@ const FutureForecast = ({ weatherData }) => {
 
     // Api Daily Forecast call -----------------------------
 
-    const DailyForecast = async (cnt) => {
+    const DailyForecast = async () => {
+        const DAILYAPIKEY = '5d62bc3ca6e9442d85284542240606';
         setLoaded(false);
-        const API = `https://api.openweathermap.org/data/2.5/forecast/daily?lat=${lat}&lon=${lon}&cnt=${cnt}&appid=${API_KEY}`;
+        const API = `http://api.weatherapi.com/v1/forecast.json?key=${DAILYAPIKEY}&q=${lat},${lon}&days=7`;
         try {
             const response = await fetch(API);
             if (response.ok) {
                 const data = await response.json();
-                setDailyWeatherData(data.list);
+                setDailyWeatherData(data?.forecast);
+
             }
             else {
                 setDailyWeatherData(null);
@@ -84,12 +86,8 @@ const FutureForecast = ({ weatherData }) => {
     // Calling UseEffect for Both Daily And Hourly Forecast Api Calls ------------
 
     useEffect(() => {
-        if (selectedForecast === 'Hourly-Forecast') {
-            HourlyForecast();
-        }
-        else {
-            DailyForecast(7);
-        }
+        DailyForecast(7);
+        HourlyForecast();
     }, [weatherData, selectedForecast]);
 
 
@@ -119,8 +117,10 @@ const FutureForecast = ({ weatherData }) => {
 
             <View style={styles.ForecastContainer}>
                 <FlatList
+                showsHorizontalScrollIndicator={false}
                     horizontal
-                    data={selectedForecast === 'Hourly-Forecast' ? hourlyWeatherData : dailyWeatherData}
+                    contentContainerStyle={{ columnGap: 10 }}
+                    data={selectedForecast === 'Hourly-Forecast' ? hourlyWeatherData : dailyWeatherData?.forecastday}
                     keyExtractor={(item, index) => index.toString()}
                     renderItem={({ item }) => (
                         <View style={{ flex: 1 }}>
@@ -141,17 +141,17 @@ const styles = StyleSheet.create({
     MainContainer: {
         alignSelf: 'center',
         paddingTop: 10,
-        height: 230,
-        width: width / 1.1,
+        alignItems: 'center',
+        height: heightToDp(75),
+        width: widthToDp(95),
         backgroundColor: 'rgba(200,200,200,0.2)',
         borderRadius: 10,
     },
     buttonContainer: {
-        alignSelf: 'center',
-        height: 60,
-        width: '94%',
+        alignItems: 'center',
+        height: heightToDp(15),
+        width: widthToDp(90),
         borderRadius: 10,
-        paddingTop: 10,
         flexDirection: 'row',
         justifyContent: 'space-evenly',
         backgroundColor: 'rgba(200,200,200,0.3)',
@@ -161,15 +161,16 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         borderRadius: 10,
-        height: 40,
-        width: 160,
+        height: heightToDp(11),
+        width: widthToDp(40),
     },
     buttonTxt: {
         fontWeight: 'bold',
     },
     ForecastContainer: {
         flex: 1,
-        width: '96%',
+        paddingTop: heightToDp(5),
+        width: widthToDp(90),
         alignSelf: 'center',
     },
 });

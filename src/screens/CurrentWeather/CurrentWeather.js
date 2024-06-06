@@ -3,12 +3,12 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-unused-vars */
 /* eslint-disable react-native/no-inline-styles */
-import { StyleSheet, Text, View, Image, ActivityIndicator } from 'react-native';
+import { StyleSheet, Text, View, Image, ActivityIndicator, SafeAreaView } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { Colors } from '../../Theme/color';
-import { Snow, Sunny, Thunder, Light_Rain, Heavy_Rain, Cloudy } from '../../Theme/Images/Images';
-import HourlyForecast from '../FutureForecast/FutureForecast';
+import { Snow, Sunny, Light_Rain, Heavy_Rain, Cloudy } from '../../Theme/Images/Images';
+import { heightToDp, widthToDp } from '../../Theme/utils/Dimensions-Api';
 
 const CurrentWeather = ({ weatherData }) => {
 
@@ -43,37 +43,35 @@ const CurrentWeather = ({ weatherData }) => {
 
     return (
 
-        <View style={styles.CurrentDetailContainer}>
-
-            <View>
-
-                <View style={{ flexDirection: 'row', paddingTop: 20 }}>
-                    <MaterialIcons name="location-pin" size={25} style={styles.Icon} />
-                    <Text style={styles.Txt}>{weatherData.name}</Text>
-                </View>
-
+        <View>
+            <View style={{ flexDirection: 'row', gap: 20 }}>
                 <View>
-                    <Text style={[styles.Txt, { fontSize: 70 }]}>{Tempreature}°</Text>
-                    <Text style={[styles.Txt, { fontWeight: '200', fontSize: 30, marginTop: 10 }]}>{main}</Text>
-                </View>
-
-                <View>
-                    <View style={[styles.TxtContainer, { width: 150 }]}>
-                        <Text style={styles.Txt}>Humidity : {weatherData.main.humidity}°</Text>
+                    <View style={{ flexDirection: 'row', paddingTop: heightToDp(5), alignItems: 'center' }}>
+                        <MaterialIcons name="location-pin" size={25} style={styles.Icon} />
+                        <Text style={styles.Txt}>{weatherData.name}</Text>
                     </View>
-
-                    <View style={[styles.TxtContainer, { width: 160 }]}>
-                        <Text style={styles.Txt}>Wind : {weatherData.wind.speed} m/s</Text>
+                    <View>
+                        <Text style={[styles.Txt, { fontSize: 60, marginTop: heightToDp(2) }]}>{Tempreature}°</Text>
+                        <Text style={[styles.Txt, { fontWeight: '200', fontSize: 30, marginTop: heightToDp(2), marginLeft: widthToDp(2) }]}>{main}</Text>
                     </View>
                 </View>
 
+                <View>
+                    <Image source={image} resizeMode="contain" style={{ height: heightToDp(50), width: widthToDp(50) }} />
+                </View>
             </View>
 
 
-            <View style={{ marginTop: 10, alignItems: 'center' }}>
-                <Image source={image} resizeMode="contain" style={styles.Image} />
 
-                <View style={[styles.TxtContainer, { width: 200, marginTop: 35 }]}>
+            <View style={{ flexWrap: 'wrap', flexDirection: 'row', gap: 10, paddingTop: heightToDp(5), justifyContent: 'center' }}>
+                <View style={[styles.TxtContainer, { width: 150 }]}>
+                    <Text style={styles.Txt}>Humidity : {weatherData.main.humidity}°</Text>
+                </View>
+
+                <View style={[styles.TxtContainer, { width: 160 }]}>
+                    <Text style={styles.Txt}>Wind : {weatherData.wind.speed}m/s</Text>
+                </View>
+                <View style={[styles.TxtContainer, { width: 200 }]}>
                     <Text style={styles.Txt}>{`H : ${weatherData.coord.lon.toFixed(0)}°   L : ${weatherData.coord.lat.toFixed(0)}°`}</Text>
                 </View>
             </View>
@@ -86,32 +84,17 @@ export default CurrentWeather;
 
 const styles = StyleSheet.create({
     Icon: {
-        color: Colors.white,
+        color: Colors.primary,
     },
     Txt: {
-        marginLeft: 5,
+        paddingLeft: widthToDp(2),
         color: Colors.white,
         fontSize: 20,
     },
-    Image: {
-        height: 200,
-        width: 200,
-    },
-    CurrentDetailContainer: {
-        alignSelf: 'center',
-        width: '90%',
-        flex: 1,
-        marginLeft: 10,
-        flexDirection: 'row',
-        justifyContent: 'space-evenly',
-        paddingTop: 20,
-    },
     TxtContainer: {
-        marginTop: 10,
         backgroundColor: Colors.primary,
         borderRadius: 10,
-        height: 35,
+        padding: heightToDp(2),
         alignItems: 'center',
-        justifyContent: 'center',
     },
 });
