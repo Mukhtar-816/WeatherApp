@@ -1,21 +1,23 @@
-import { PermissionsAndroid, StyleSheet, Text, View } from 'react-native'
-import React, { useEffect } from 'react'
+import { StyleSheet, View } from 'react-native'
+import React, { useEffect, useState } from 'react'
 import HomeSrc from './src/screens/HomeSrc/HomeSrc'
 import SplashScreen from 'react-native-splash-screen';
+import { AppProvider } from './src/Theme/AppContext/AppContext';
 
 const App = () => {
 
   useEffect(() => {
     setTimeout(() => {
       SplashScreen.hide();
-    }, 10)
+    }, 1000)
   }, []);
-  
 
   return (
-    <View style={{flex : 1}}>
-      <HomeSrc/>
-    </View>
+    <AppProvider>
+      <View style={{ flex: 1 }}>
+        <HomeSrc />
+      </View>
+    </AppProvider>
   )
 }
 

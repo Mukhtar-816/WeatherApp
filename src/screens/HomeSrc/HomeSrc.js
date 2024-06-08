@@ -3,12 +3,13 @@
 /* eslint-disable react-native/no-inline-styles */
 /* eslint-disable eqeqeq */
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, ImageBackground, ScrollView, ActivityIndicator, Alert, PermissionsAndroid, Button } from 'react-native';
+import { View, StyleSheet, ImageBackground, ScrollView, ActivityIndicator, Alert, PermissionsAndroid, Button, Text } from 'react-native';
 import SearchBar from '../../Theme/components/SearchBar.component';
 import WeatherSrc from '../CurrentWeather/CurrentWeather';
 import { Colors } from '../../Theme/color';
 import FutureForecast from '../FutureForecast/FutureForecast';
 import { heightToDp, widthToDp } from '../../Theme/utils/Dimensions-Api';
+import { useAppContext } from '../../Theme/AppContext/AppContext';
 
 const HomeSrc = () => {
 
@@ -16,6 +17,7 @@ const HomeSrc = () => {
     const [weatherData, setWeatherData] = useState(null);
     const [loaded, setLoaded] = useState(false);
     const [cityName, setCityName] = useState('');
+    const { user_Location } = useAppContext();
 
     const API_KEY = 'e49fb4702a36252f6cb80c496c474b4c';
 
@@ -23,10 +25,11 @@ const HomeSrc = () => {
 
     // Weather Api Call Algorithm-------------------------
 
-    const FetchWeatherApi = async (cityName) => {
+    const FetchWeatherApi = async (cityName, lat, lon) => {
 
         setLoaded(true);
-        const API = `https://api.openweathermap.org/data/2.5/weather?q=${cityName}&appid=${API_KEY}`;
+        const API = cityName?.length != 0 ? `https://api.openweathermap.org/data/2.5/weather?q=${cityName}&appid=${API_KEY}`
+        : `https://api.openweathermap.org/data/2.5/weather?q=${lat},${lon}&appid=${API_KEY}`;
 
 
         try {
@@ -45,32 +48,35 @@ const HomeSrc = () => {
     };
 
     useEffect(() => {
-        FetchWeatherApi(cityName);
+        if (user_Location != null && cityName?.length == 0) {
+            FetchWeatherApi(null, user_Location?.coords?.latitude, user_Location?.coords?.longitude)
+        }
+        else if (cityName.length > 0) { FetchWeatherApi(cityName); }
     }, [cityName]);
     // ---------------------------------------------------------
 
 
     const requestLoactionPermission = async () => {
         try {
-          const granted = await PermissionsAndroid.request(
-            PermissionsAndroid.PERMISSIONS.CAMERA,
-            {
-              title: 'Location Permission',
-              message:
-                'Allow us to locate for weather Forecast ',
-              buttonNegative: 'Cancel',
-              buttonPositive: 'OK',
-            },
-          );
-          if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-            console.log('Granted');
-          } else {
-            console.log(' permission denied');
-          }
+            const granted = await PermissionsAndroid.request(
+                PermissionsAndroid.PERMISSIONS.CAMERA,
+                {
+                    title: 'Location Permission',
+                    message:
+                        'Allow us to locate for weather Forecast ',
+                    buttonNegative: 'Cancel',
+                    buttonPositive: 'OK',
+                },
+            );
+            if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+                console.log('Granted');
+            } else {
+                console.log(' permission denied');
+            }
         } catch (err) {
-          console.warn(err);
+            console.warn(err);
         }
-      };
+    };
 
 
 
@@ -96,6 +102,9 @@ const HomeSrc = () => {
                         {weatherData == null ?
                             null : <WeatherSrc weatherData={weatherData} />}
                     </View>
+
+
+
 
                     {weatherData == null && <View style={{ alignSelf: 'center', paddingTop: heightToDp(50) }}>
                         <ActivityIndicator
