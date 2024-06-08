@@ -10,9 +10,6 @@ const App = () => {
       SplashScreen.hide();
     }, 10)
   }, []);
-
-
-
   
 
   return (

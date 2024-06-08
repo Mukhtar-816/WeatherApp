@@ -60,7 +60,7 @@ const FutureForecast = ({ weatherData }) => {
     // Api Daily Forecast call -----------------------------
 
     const DailyForecast = async () => {
-        const DAILYAPIKEY = '5d62bc3ca6e9442d85284542240606';
+        const DAILYAPIKEY = 'c34872d0b37c445e92a122427240806';
         setLoaded(false);
         const API = `http://api.weatherapi.com/v1/forecast.json?key=${DAILYAPIKEY}&q=${lat},${lon}&days=7`;
         try {
